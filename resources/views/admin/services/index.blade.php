@@ -37,12 +37,9 @@
                                     <tr>
                                         <th>ID</th>
                                         <th>Cliente</th>
-                                        <th>Sucursal/Origen</th> 
-                                        <th>Destino</th> 
-                                        <th>Costos del servicio</th>
-                                        <th>Cantidad cargada</th>  
+                                        <th>Sucursal</th>  
                                         <th>Status</th>
-                                        <th>Placa del vehiculo</th>    
+                                        <th>Trabajador</th>    
                                         <th style="text-align:right;">Opciones</th>
                                     </tr>
                                 </thead>
@@ -58,25 +55,7 @@
                                             <td >
                                                 {{$row->sucursal}}
                                             </td> 
-                                            <td>
-                                                @if($row->descharg_id == 0)
-                                                Sin Asignar
-                                                @else 
-                                                <a href="http://maps.google.com/?q={{ $row->address_destin }}" target="_blank">
-                                                  {{$service->viewPlL($row->descharg_id);}}
-                                                </a>
-                                                @endif
-                                            </td>
-                                            <td>
-                                                <div class="badge rounded-pill text-success bg-light-success p-2 text-uppercase px-3">
-                                                    <b>${{ $row->d_charges }}</b>
-                                                </div> 
-                                            </td>
-                                            <td>
-                                                <div class="badge rounded-pill text-info bg-light-success p-2 text-uppercase px-3">
-                                                    <b>{{ $row->amount_chargue }}</b>
-                                                </div>
-                                            </td>  
+                                              
                                             <td>
                                                 @if($row->status == 0) <!-- Servicio Nuevo -->
                                                 <div class="badge rounded-pill text-info bg-light-success p-2 text-uppercase px-3">

@@ -3,7 +3,6 @@
 
 <div class="form-group col-md-6"><input type="text" hidden name="lat" id="lat" class="form-control" required placeholder="Latitude" value="{{ $data->lat }}"></div>
 <div class="form-group col-md-6"><input type="text" hidden name="lng" id="lng" class="form-control" required placeholder="Longitude" value="{{ $data->lng }}"></div>
-<div class="form-group col-md-6"><input type="text" hidden name="h3index" id="h3index" class="form-control" required placeholder="h3index" value="{{ $data->h3index }}"></div>
 
     <div id="map" style="width:100%;height:500px;"></div>
     <div id="infowindow-content">
@@ -11,13 +10,11 @@
       <span id="place-id"></span><br>
       <span id="place-address"></span>
     </div>
-
-<script src="https://unpkg.com/h3-js"></script>
+ 
 <script>
 function initMap() {
     var map;
-    var marker;
-    let h3index;
+    var marker; 
     var input = document.getElementById('pac-input');
     var autocomplete = new google.maps.places.Autocomplete(input);
     var infowindow = new google.maps.InfoWindow();
@@ -40,8 +37,7 @@ function initMap() {
                     disableDefaultUI: true
                   }
               );
-
-              h3index = h3.geoToH3(lat, lng, 6);
+ 
 
               input.focus();
               autocomplete.bindTo('bounds', map);
@@ -49,7 +45,7 @@ function initMap() {
               // Specify just the place data fields that you need.
               autocomplete.setFields(['place_id', 'geometry', 'name', 'formatted_address']);
 
-              map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+              // map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
               infowindow.setContent(infowindowContent);
 
@@ -77,16 +73,14 @@ function initMap() {
                     disableDefaultUI: true
                   }
               );
-
-              h3index = h3.geoToH3(lat, lng, 6);
-
+ 
               //input.focus();
               autocomplete.bindTo('bounds', map);
 
               // Specify just the place data fields that you need.
               autocomplete.setFields(['place_id', 'geometry', 'name', 'formatted_address']);
 
-              map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+              // map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
               infowindow.setContent(infowindowContent);
 
@@ -124,12 +118,9 @@ function initMap() {
         marker.setVisible(true);
 
         infowindowContent.children['place-address'].textContent = results[0].formatted_address;
-
-        h3index = h3.geoToH3(results[0].geometry.location.lat(), results[0].geometry.location.lng(), 6);
-
+ 
         document.getElementById('lat').value = results[0].geometry.location.lat();
         document.getElementById('lng').value = results[0].geometry.location.lng();
-        document.getElementById('h3index').value = h3index;
         infowindow.open(map, marker);
       });
     });

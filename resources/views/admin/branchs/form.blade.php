@@ -20,16 +20,11 @@
 					<div class="form-group col-md-6" style="padding-bottom: 1rem;">
 						<label for="email_contact">Correo de contacto</label>
 						<input id="email_contact" class="controls form-control" name="email_contact" value="{{ $data->email_contact }}" type="text">
-					</div>
-
-					<div class="form-group col-md-6" style="padding-bottom: 1rem;">
-						<label for="type">Tipo</label>
-						<input id="type" class="controls form-control" name="type" value="{{ $data->type }}" type="text">
-					</div>
+					</div> 
 
 					<div class="form-group col-md-6" style="padding-bottom: 1rem;">
 						<label for="status_branch">Status</label>
-						<select name="status" id="status_branch" class="form-control">
+						<select name="status" id="status_branch" class="form-select">
 							<option value="0" @if($data->status == 0) selected @endif>Active</option>
 							<option value="1" @if($data->status == 1) selected @endif>Disbaled</option>
 						</select>

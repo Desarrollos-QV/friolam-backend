@@ -7,6 +7,7 @@ use Auth;
 use App\Commaned;
 use App\Admin;
 use App\AppUser;
+use App\User;
 use App\Materials;
 use App\Services;
 use App\PlaceLoading;
@@ -59,11 +60,8 @@ class ServiceController extends Controller {
 		
 			return View($this->folder.'add',[ 
 				'data' 		=> new Services,
-				'clients'   => Admin::where('id','!=',1)->get(),
-				'materials' => Materials::get(),
-				'dboys'     => Delivery::where('status',0)->get(),
-				'chargues'  => PlaceLoading::where('type_place',0)->where('status',0)->get(),
-				'descharg'  => PlaceLoading::where('type_place',1)->where('status',0)->get(),
+				'clients'   => User::get(),
+				'dboys'     => AppUser::where('status',0)->get(),
 				'form_url' 	=> env('admin').'/Services',
 				'array'		=> [],
 				'admin'     => Admin::find(1),
@@ -99,9 +97,7 @@ class ServiceController extends Controller {
 		if ($admin->hasperm('Servicios')) {
 			return View($this->folder.'edit',[
 				'data' 		=> $res->getElement($id),
-				'dboys'     => Delivery::where('status',0)->get(),
-				'chargues'  => PlaceLoading::where('type_place',0)->where('status',0)->get(),
-				'descharg'  => PlaceLoading::where('type_place',1)->where('status',0)->get(),
+				'dboys'     => AppUser::where('status',0)->get(),
 				'form_url' 	=> env('admin').'/Services/'.$id,
 				'admin'     => Admin::find(1),
 				'res'       => $res 

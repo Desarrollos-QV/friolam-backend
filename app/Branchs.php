@@ -50,9 +50,7 @@ class Branchs extends Authenticatable
         $add->email_contact = isset($data['email_contact']) ? $data['email_contact'] : null;
         $add->address       = isset($data['address']) ? $data['address'] : null;
         $add->lat           = isset($data['lat']) ? $data['lat'] : null;
-        $add->lng           = isset($data['lng']) ? $data['lng'] : null;
-        $add->h3index       = isset($data['h3index']) ? $data['h3index'] : null;
-        $add->type          = isset($data['type']) ? $data['type'] : null;
+        $add->lng           = isset($data['lng']) ? $data['lng'] : null;  
         $add->observations  = isset($data['observations']) ? $data['observations'] : null;
         $add->status        = isset($data['status']) ? $data['status'] : null;
         $add->s_data        = serialize($a);

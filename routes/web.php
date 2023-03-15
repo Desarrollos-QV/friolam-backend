@@ -45,6 +45,7 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin','prefix' => env('admin
         Route::resource('user','UserController');
         Route::get('user/delete/{id}','UserController@delete');
         Route::get('user/status/{id}','UserController@status');
+        Route::get('user/{id}/viewqr','UserController@viewqr');
         Route::get('imageRemove/{id}','UserController@imageRemove');
         Route::get('loginWithID/{id}','UserController@loginWithID');
         Route::get('user/pay/{id}','UserController@pay');

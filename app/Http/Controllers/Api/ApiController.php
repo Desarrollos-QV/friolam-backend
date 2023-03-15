@@ -31,6 +31,7 @@ use App\Opening_times;
 use App\Balance;
 use App\Commaned;
 use App\Branchs;
+use App\User;
 use DB;
 use Validator;
 use Redirect;
@@ -654,25 +655,22 @@ class ApiController extends Controller {
 
 	public function getBranchs($id)
 	{ 
-		$branch_id = Admin::find($id)->branch_id;
 		$data = [];
-		if ($branch_id == 0) {
-			return 'Administrador';
-		}else {
-			$array = explode(",", $branch_id);
-			
-			for ($i=0; $i < count($array); $i++) { 
-			
-				$branch = Branchs::find($array[$i]);
-				$data[] = [
-					'id' => $branch->id,
-					'name' => $branch->name,
-					'address' => $branch->address,
-					'lat' => $branch->lat,
-					'lng' => $branch->lng,
-				];
-			}
+		
+		$array = json_decode(User::find($id)->branchs);
+		
+		for ($i=0; $i < count($array); $i++) { 
+		
+			$branch = Branchs::find($array[$i]);
+			$data[] = [
+				'id' => $branch->id,
+				'name' => $branch->name,
+				'address' => $branch->address,
+				'lat' => $branch->lat,
+				'lng' => $branch->lng,
+			];
 		}
+		
 		
 
 		return response()->json($data);

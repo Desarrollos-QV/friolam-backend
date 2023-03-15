@@ -47,21 +47,38 @@
         </li>
         @endif 
 
+        
+
         @if($admin->hasPerm('Subaccount'))
         <li>
-            <a href="{{ Asset(env('admin').'/adminUser') }}">
+            <a href="javascript:;" class="has-arrow">
                 <div class="parent-icon">
                     <i class='lni lni-users'></i>
                 </div>
                 <div class="menu-title">Clientes</div>
             </a>
+            <ul>
+                <li>
+                    <a href="{{ Asset(env('admin').'/user') }}">
+                        <i class="bx bx-right-arrow-alt"></i>
+                        Listado de Clientes
+                    </a>
+                </li>
+                <li> 
+                    <a href="{{ Asset(env('admin').'/branchs') }}">
+                        <i class="bx bx-right-arrow-alt"></i>
+                        Sucursales
+                    </a>
+                </li>
+            </ul>
         </li>
         @endif
 
         @if($admin->hasPerm('Servicios'))
         <li>
             <a href="javascript:;" class="has-arrow">
-                <div class="parent-icon"><i class='fadeIn animated bx bx-mail-send'></i>
+                <div class="parent-icon">
+                    <i class='fadeIn animated bx bx-mail-send'></i>
                 </div>
                 <div class="menu-title">Servicios</div>
             </a>

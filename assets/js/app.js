@@ -122,3 +122,19 @@ $(function() {
 
 
 });
+
+
+
+(function($) {
+	'use strict';
+	 
+	 /**
+	 * @description Initialize select2
+	 * @param {(Element|jQuery)} [context] - A DOM Element, input tag  to use as context.
+	 * @requires select2 plugin
+	 */
+	if ($(".js-select2").length > 0 ) {
+	  $(".js-select2").select2();
+	}
+  
+  })(window.jQuery);

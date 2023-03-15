@@ -21,33 +21,6 @@ class Services extends Authenticatable
         $add->dboy              = isset($data['dboy_id']) ? $data['dboy_id'] : 0;
         $add->material_id       = isset($data['material_id']) ? $data['material_id'] : 0;
         $add->sucursal_id       = isset($data['sucursal_id']) ? $data['sucursal_id'] : 0;
-
-        $add->chargue_id        = isset($data['chargue_id']) ? $data['chargue_id'] : 0;
-        if (isset($data['chargue_id'])) {
-            $place_ch = Branchs::find($data['chargue_id']);
-            $add->address_origin    = $place_ch->address;
-            $add->lat_orig          = $place_ch->lat;
-            $add->lng_orig          = $place_ch->lng;
-        }else {
-            $add->address_origin    = '';
-            $add->lat_orig          = 0;
-            $add->lng_orig          = 0;
-        }
-        
-        $add->descharg_id       = isset($data['descharg_id']) ? $data['descharg_id'] : 0;
-        if (isset($data['descharg_id'])) {
-            $place_dc = PlaceLoading::find($data['descharg_id']);
-            $add->address_destin    = $place_dc->address;
-            $add->lat_dest          = $place_dc->lat;
-            $add->lng_dest          = $place_dc->lng;
-        }else {
-            $add->address_destin    = '';
-            $add->lat_dest          = 0;
-            $add->lng_dest          = 0;
-        }
-        
-        $add->d_charges         = isset($data['d_charges']) ? $data['d_charges'] : 0;
-        $add->amount_chargue    = isset($data['amount_chargue']) ? $data['amount_chargue'] : 0;
         $add->factura           = isset($data['factura']) ? $data['factura'] : 0;
         $add->observations      = isset($data['observations']) ? $data['observations'] : '';
 
@@ -98,9 +71,8 @@ class Services extends Authenticatable
 
         if ($serv->id) {
             if ($serv->dboy != 0) {
-                $dboy = Delivery::find($serv->dboy)->type_driver;
-                $placas = Vehicles::find($dboy);
-                return $placas->number_plate;
+                $dboy = AppUser::find($serv->dboy);
+                return $dboy->name;
             }else {
                 return "Sin Asignar";
             }
@@ -135,10 +107,9 @@ class Services extends Authenticatable
                 $query->where('services.client_id',$admin->id); 
             }
 
-        })->leftjoin('admin','admin.id','=','services.client_id')
-            ->leftjoin('materiales','materiales.id','=','services.material_id')
+        })->leftjoin('users','users.id','=','services.client_id')
             ->leftjoin('branchs','branchs.id','=','services.sucursal_id')
-            ->select('admin.name as name_user','admin.*','materiales.nombre as material','materiales.*','branchs.name as sucursal','services.*')
+            ->select('users.name as name_user','users.*','branchs.name as sucursal','services.*')
             ->orderBy('services.id','DESC')->get();
     }
 
@@ -149,9 +120,8 @@ class Services extends Authenticatable
     */
     public function getElement($id)
     {
-        return Services::find($id)->leftjoin('admin','admin.id','=','services.client_id')
-        ->leftjoin('materiales','materiales.id','=','services.material_id')
-        ->select('admin.name as name_user','admin.*','materiales.nombre as material','materiales.*','services.*')
+        return Services::find($id)->leftjoin('users','users.id','=','services.client_id')
+        ->select('users.name as name_user','users.*','services.*')
         ->orderBy('services.id','DESC')->first();
     }
     
