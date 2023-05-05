@@ -20,7 +20,7 @@
         <!--end breadcrumb-->
 
         <div class="row ">
-            <div class="col-lg-9 mx-auto">
+            <div class="col-lg-11 mx-auto">
                 {!! Form::model($data, ['url' => [$form_url],'files' => true],['class' => 'col s12']) !!}
                         
                     <div class="card">

@@ -59,11 +59,11 @@
     
     <div class="row g-3">
         <div class="col-md-6">
-            <label for="inputEmail4">Sucursales</label>
-            <select name="branchs[]" class="form-select js-select2" multiple="true">
-                @foreach ($branchs as $branch)
-                    <option value="{{$branch->id}}" @if(in_array($branch->id,$arrayBranch)) selected @endif>
-                        {{ $branch->name }}
+            <label for="inputEmail4">Agrega SubClientes</label>
+            <select name="subusers[]" class="form-select js-select2" multiple="true">
+                @foreach ($SubUsers as $subs)
+                    <option value="{{$subs->id}}" @if(in_array($subs->id,$arraySubUsers)) selected @endif>
+                        {{ $subs->razon_social }}
                     </option>
                 @endforeach
             </select>

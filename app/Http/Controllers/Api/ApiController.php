@@ -32,6 +32,8 @@ use App\Balance;
 use App\Commaned;
 use App\Branchs;
 use App\User;
+use App\SubUsers;
+use App\Services;
 use DB;
 use Validator;
 use Redirect;
@@ -674,5 +676,56 @@ class ApiController extends Controller {
 		
 
 		return response()->json($data);
+	}
+
+	public function getSubClients($id)
+	{ 
+		$data = [];
+		
+		$array = json_decode(User::find($id)->subusers);
+		
+		for ($i=0; $i < count($array); $i++) { 
+		
+			$subUs = SubUsers::find($array[$i]);
+			$data[] = [
+				'id' => $subUs->id,
+				'name' => $subUs->razon_social,
+				'address' => $subUs->direccion,
+			];
+		}
+		
+		
+
+		return response()->json($data);
+	}
+
+	/**
+	 * Servicios
+	 */
+	public function chkServices($id)
+	{
+		try {
+			$req = new Services;
+			return response()->json(['data' => $req->chkServices($id)]);
+		} catch (\Exception $e) {
+			return response()->json(['data' => 'fail','err' => $e->getMessage()]);
+		}
+	}
+
+	public function ChangeService(Request $request)
+	{
+		try {
+			
+			$data = $request->all();
+			$service = Services::find($data['id_service']);
+
+			$service->status = 5; // Finalizado
+			$service->dboy	 = $data['dboy'];
+			$service->save();
+
+			return response()->json(['data' => true, 'req' => $data]);
+		} catch (\Exception $e) {
+			return response()->json(['data' => 'fail','err' => $e->getMessage()]);
+		}
 	}
 }

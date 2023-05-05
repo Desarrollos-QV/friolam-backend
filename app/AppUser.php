@@ -49,12 +49,13 @@ class AppUser extends Authenticatable
                         if (filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
                             $add                = new AppUser;
                             $add->name          = $data['name'];
+                            $add->lastname      = $data['lastname'];
                             $add->email         = $data['email'];
                             $add->phone         = isset($data['phone']) ? $data['phone'] : 'null';
                             $add->rut           = isset($data['rut']) ? $data['rut'] : '';
                             $add->password      = $data['password'];
                             $add->pswfacebook   = isset($data['pswfb']) ? $data['pswfb'] : 0;
-
+                            $add->date_of_hire  = isset($data['date_of_hire']) ? $data['date_of_hire'] : 'null';
                             if(isset($data['pic']))
                             {
                                 $filename   = time().rand(111,699).'.' .$data['pic']->getClientOriginalExtension(); 
@@ -75,11 +76,13 @@ class AppUser extends Authenticatable
                     if (filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
                         $add                = new AppUser;
                         $add->name          = $data['name'];
+                        $add->lastname      = $data['lastname'];
                         $add->email         = $data['email'];
                         $add->phone         = isset($data['phone']) ? $data['phone'] : 'null';
                         $add->rut           = isset($data['rut']) ? $data['rut'] : '';
                         $add->password      = $data['password'];
                         $add->pswfacebook   = isset($data['pswfb']) ? $data['pswfb'] : 0;
+                        $add->date_of_hire  = isset($data['date_of_hire']) ? $data['date_of_hire'] : 'null';
                         if(isset($data['pic']))
                         {
                             $filename   = time().rand(111,699).'.' .$data['pic']->getClientOriginalExtension(); 
@@ -104,11 +107,13 @@ class AppUser extends Authenticatable
             if (filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
                 $add                = AppUser::find($type);
                 $add->name          = $data['name'];
+                $add->lastname      = $data['lastname'];
                 $add->email         = $data['email'];
                 $add->phone         = isset($data['phone']) ? $data['phone'] : 'null';
                 $add->rut           = isset($data['rut']) ? $data['rut'] : '';
                 $add->password      = $data['password'];
                 $add->pswfacebook   = isset($data['pswfb']) ? $data['pswfb'] : 0;
+                $add->date_of_hire  = isset($data['date_of_hire']) ? $data['date_of_hire'] : 'null';
 
                 if(isset($data['pic']))
                 {

@@ -5,6 +5,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Auth;
 use App\User;
+use App\SubUsers;
 use App\City;
 use App\Branchs;
 use App\UserImage;
@@ -51,8 +52,8 @@ class UserController extends Controller {
 	{		
 		return View($this->folder.'add',[
 			'data' 		=> new User,
-			'branchs'   => Branchs::get(),
-			'arrayBranch'	=> [],
+			'SubUsers'   => SubUsers::get(),
+			'arraySubUsers'	=> [],
 			'form_url'  => env('admin').'/user',
 			'admin' => new Admin
 		]);
@@ -92,8 +93,8 @@ class UserController extends Controller {
 			'data' 		=> User::find($id),
 			'form_url'  => env('admin').'/user/'.$id,
 			'admin'		=> Admin::find(1),
-			'branchs'   => Branchs::get(),
-			'arrayBranch'	=> $user->getAssignedBranch($id),
+			'SubUsers'   => SubUsers::get(),
+			'arraySubUsers'	=> $user->getAssignedBranch($id),
 		]);
 	}
 

@@ -93,7 +93,7 @@ class ServiceController extends Controller {
 	{
 		$admin = new Admin;
 		$res   = new Services;
-
+		 
 		if ($admin->hasperm('Servicios')) {
 			return View($this->folder.'edit',[
 				'data' 		=> $res->getElement($id),

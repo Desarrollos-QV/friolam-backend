@@ -53,6 +53,17 @@ Route::group(['namespace' => 'App\Http\Controllers\Admin','prefix' => env('admin
         
         /*
         |------------------------------
+        |Manage Sub-Users
+        |------------------------------
+        */
+        Route::resource('subusers','SubUserController');
+        Route::get('subusers/delete/{id}','SubUserController@delete');
+        Route::get('subusers/status/{id}','SubUserController@status');
+    
+        Route::get('importSubUsers','SubUserController@import');
+        Route::post('importSubUsers','SubUserController@_import');
+        /*
+        |------------------------------
         |Manage Admin Account
         |------------------------------
         */

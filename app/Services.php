@@ -17,10 +17,12 @@ class Services extends Authenticatable
     public function addNew($data,$type) 
     { 
         $add                    = $type === 'add' ? new Services : Services::find($type);
+        $add->service_name      = isset($data['service_name']) ? $data['service_name'] : 'indefinido';
         $add->client_id         = isset($data['client_id']) ? $data['client_id'] : 0;
         $add->dboy              = isset($data['dboy_id']) ? $data['dboy_id'] : 0;
-        $add->material_id       = isset($data['material_id']) ? $data['material_id'] : 0;
         $add->sucursal_id       = isset($data['sucursal_id']) ? $data['sucursal_id'] : 0;
+        $add->subclient_id      = isset($data['subclient_id']) ? $data['subclient_id'] : 0;
+        $add->code_error        = isset($data['code_error']) ? $data['code_error'] : 0;
         $add->factura           = isset($data['factura']) ? $data['factura'] : 0;
         $add->observations      = isset($data['observations']) ? $data['observations'] : '';
 
@@ -108,8 +110,8 @@ class Services extends Authenticatable
             }
 
         })->leftjoin('users','users.id','=','services.client_id')
-            ->leftjoin('branchs','branchs.id','=','services.sucursal_id')
-            ->select('users.name as name_user','users.*','branchs.name as sucursal','services.*')
+            ->leftjoin('sub_users','sub_users.id','=','services.subclient_id')
+            ->select('users.name as name_user','users.*','sub_users.razon_social as subcliente','services.*')
             ->orderBy('services.id','DESC')->get();
     }
 
@@ -120,7 +122,7 @@ class Services extends Authenticatable
     */
     public function getElement($id)
     {
-        return Services::find($id)->leftjoin('users','users.id','=','services.client_id')
+        return Services::where('services.id',$id)->leftjoin('users','users.id','=','services.client_id')
         ->select('users.name as name_user','users.*','services.*')
         ->orderBy('services.id','DESC')->first();
     }
@@ -243,5 +245,41 @@ class Services extends Authenticatable
         }
 
         return $allData;
+    }
+
+
+    /**
+     * 
+     * Obtenemos todos los Servicios de este usuario que esten activos 
+     * 
+    */
+    function chkServices($id)
+    {
+        $req = Services::where(function($query) use($id){
+            $query->whereIn('services.dboy',[$id,0]);
+            $query->whereIn('services.status',[0,1,3,4,4.5,5]);
+        })->orderBy('id','DESC')
+        ->get();
+        
+        $data = []; 
+        foreach ($req as $key) {
+            
+            $data[] = [
+                'work' => ($key->dboy != 0) ? collect(AppUser::find($key->dboy))->except(['password','pswfacebook','otp','created_at','updated_at']) : [],
+                'service' => [
+                    "id"            => $key->id,
+                    "service_name"  => $key->service_name,
+                    "client"        => (isset($key->client_id)) ? collect(User::find($key->client_id))->except(['password','shw_password','remember_token','lat','lng','subusers','s_data','created_at','updated_at']) : [],
+                    "subclient"  => (isset($key->subclient_id)) ? collect(SubUsers::find($key->subclient_id))->except(['updated_at','created_at']) : [],
+                    "code_error"    => $key->code_error,
+                    "factura"	    => $key->factura,
+                    "observations"  => $key->observations,
+                    "status"        => $key->status,
+                    "created_at"	=> date('d-M-Y',strtotime($key->created_at))   
+                ]
+            ];
+        }
+
+        return $data;
     }
 }

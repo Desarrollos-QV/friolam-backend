@@ -82,7 +82,12 @@ Route::group(array('namespace' => 'App\Http\Controllers\Api'), function () {
     Route::get('chk_comm/{id}','ApiController@chk_comm');
     Route::get('demoCronNodejs','ApiController@demoCronNodejs');
 
+    // Servicios
+    Route::get('chkServices/{id}','ApiController@chkServices');
+    Route::post('ChangeService','ApiController@ChangeService');
+
     Route::get('getBranchs/{id}','ApiController@getBranchs');
+    Route::get('getSubClients/{id}','ApiController@getSubClients');
 
     include("dboy.php");
 

@@ -64,6 +64,12 @@
                         Listado de Clientes
                     </a>
                 </li>
+                <li>
+                    <a href="{{ Asset(env('admin').'/subusers') }}">
+                        <i class="bx bx-right-arrow-alt"></i>
+                        Sub Clientes
+                    </a>
+                </li>
                 <li> 
                     <a href="{{ Asset(env('admin').'/branchs') }}">
                         <i class="bx bx-right-arrow-alt"></i>
@@ -97,7 +103,7 @@
                 </li>
                 
                 <li> 
-                    <a href="{{ Asset(env('admin').'/Services?status=3') }}">
+                    <a href="{{ Asset(env('admin').'/Services?status=5') }}">
                         <i class="bx bx-right-arrow-alt"></i>
                         Servicio Finalizados
                     </a>

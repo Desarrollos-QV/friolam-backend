@@ -37,7 +37,7 @@
                                         <th>Usuario</th>
                                         <th>Email</th>
                                         <th>Telefono</th>
-                                        <th>Fecha de registro</th> 
+                                        <th>Fecha de contratación</th> 
                                         <th>Estado</th>
                                         <th>Eliminar</th>
                                     </tr>
@@ -58,7 +58,7 @@
                                         <td>{{ $row->name }}</td>
                                         <td>{{ $row->email }}</td>
                                         <td>{{ $row->phone }}</td>
-                                        <td>{{ date('d-M-Y',strtotime($row->created_at)) }}</td>
+                                        <td>{{ date('d-M-Y',strtotime($row->date_of_hire)) }}</td>
                                          
                                         <td>
                                             @if($row->status == 0)

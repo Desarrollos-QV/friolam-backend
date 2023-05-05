@@ -36,8 +36,10 @@
                                 <thead class="table-dark">
                                     <tr>
                                         <th>ID</th>
+                                        <th>Servicio a realizar</th>
                                         <th>Cliente</th>
-                                        <th>Sucursal</th>  
+                                        <th>SubCliente</th>  
+                                        <th># Factura</th>
                                         <th>Status</th>
                                         <th>Trabajador</th>    
                                         <th style="text-align:right;">Opciones</th>
@@ -49,13 +51,16 @@
                                             <td>
                                                 #{{ $row->id }}
                                             </td>
+                                            <td>{{ $row->service_name }}</td>
                                             <td >
                                                 {{$row->name_user}}
                                             </td>
                                             <td >
-                                                {{$row->sucursal}}
+                                                {{$row->subcliente}}
                                             </td> 
-                                              
+                                            <td >
+                                                #{{$row->factura}}
+                                            </td> 
                                             <td>
                                                 @if($row->status == 0) <!-- Servicio Nuevo -->
                                                 <div class="badge rounded-pill text-info bg-light-success p-2 text-uppercase px-3">
