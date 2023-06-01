@@ -83,6 +83,7 @@ Route::group(array('namespace' => 'App\Http\Controllers\Api'), function () {
     Route::get('demoCronNodejs','ApiController@demoCronNodejs');
 
     // Servicios
+    Route::post('AddService','ApiController@AddService');
     Route::get('chkServices/{id}','ApiController@chkServices');
     Route::post('ChangeService','ApiController@ChangeService');
 

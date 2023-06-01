@@ -702,6 +702,17 @@ class ApiController extends Controller {
 	/**
 	 * Servicios
 	 */
+
+	public function AddService(Request $request)
+	{
+		try {
+			$req = new Services;
+			return response()->json(['data' => $req->addNew($request->all(),'add')]);
+		} catch (\Exception $e) {
+			return response()->json(['data' => 'fail','err' => $e->getMessage()]);
+		}
+	}
+
 	public function chkServices($id)
 	{
 		try {

@@ -74,7 +74,7 @@ class Services extends Authenticatable
         if ($serv->id) {
             if ($serv->dboy != 0) {
                 $dboy = AppUser::find($serv->dboy);
-                return $dboy->name;
+                return ($dboy) ? $dboy->name : "No Encontrado";
             }else {
                 return "Sin Asignar";
             }
