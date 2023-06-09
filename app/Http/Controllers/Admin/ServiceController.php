@@ -28,16 +28,28 @@ class ServiceController extends Controller {
 	public function index()
 	{
 		$res = new Services;
+		$comm = new Commaned;
         $admin = new Admin;
         $status = isset($_GET['status']) ? $_GET['status'] : 0;
         $title = 'Listado de Servicios'; 
 
 		if ($admin->hasperm('Servicios')) {
+
+			// return response()->json([
+            //     'data' 		=> $res->getAll($status), 
+            //     'link' 		=> env('admin').'/Services/',
+            //     'form_url'	=> env('admin').'/Services/assign',
+            //     'admin'     => $admin,
+			// 	'comm'		=> $comm,
+			// 	'service'   => $res
+			// ]);
+
             return View($this->folder.'index',[
                 'data' 		=> $res->getAll($status), 
                 'link' 		=> env('admin').'/Services/',
                 'form_url'	=> env('admin').'/Services/assign',
                 'admin'     => $admin,
+				'comm'		=> $comm,
 				'service'   => $res
 			]); 
 		} else {

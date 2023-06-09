@@ -15,101 +15,58 @@ class Commaned extends Authenticatable
 
     public function addNew($data) 
     {
-        $add                    = new commaned;
-        $add->user_id           = isset($data['user_id']) ? $data['user_id'] : '';
-        $add->address_origin    = isset($data['address_origin']) ? $data['address_origin'] : '';
-        $add->lat_orig          = isset($data['lat_orig']) ? $data['lat_orig'] : 0;
-        $add->lng_orig          = isset($data['lng_orig']) ? $data['lng_orig'] : 0;
-        $add->address_destin    = isset($data['address_destin']) ? $data['address_destin'] : '';
-        $add->lat_dest          = isset($data['lat_dest']) ? $data['lat_dest'] : 0;
-        $add->lng_dest          = isset($data['lng_dest']) ? $data['lng_dest'] : 0;
-        $add->first_instr       = isset($data['first_instr']) ? $data['first_instr'] : '';
-        $add->second_instr      = isset($data['second_instr']) ? $data['second_instr'] : '';
-        $add->d_boy             = 10; //isset($data['d_boy']) ? $data['d_boy'] : 0;
-        $add->price_comm        = isset($data['price_comm']) ? $data['price_comm'] : 0;
-        $add->d_charges         = isset($data['d_charges']) ? $data['d_charges'] : 0;
-        $add->total             = isset($data['total']) ? $data['total'] : 0;
-        $add->payment_method    = isset($data['payment_method']) ? $data['payment_method'] : 0;
-        $add->payment_id        = isset($data['payment_id']) ? $data['payment_id'] : 0;
-        $add->status            = 1; //isset($data['status']) ? $data['status'] : 0;
+        $add                        = new commaned;
+        $add->user_id               = $data['userId'];
+        $add->services_id           = $data['id_service'];
+        $add->request               = isset($data['data']['request']) ? $data['data']['request'] : ''; 
+        $add->model                 = isset($data['data']['model']) ? $data['data']['model'] : 0;
+        $add->serie                 = isset($data['data']['serie']) ? $data['data']['serie'] : 0;
+        $add->acivo                 = isset($data['data']['acivo']) ? $data['data']['acivo'] : '';
+        $add->problemDescription    = isset($data['data']['problemDescription']) ? $data['data']['problemDescription'] : 0;
+        $add->total                 = isset($data['data']['total']) ? $data['data']['total'] : 0;
+        $add->fixDetail             = isset($data['data']['fixDetail']) ? $data['data']['fixDetail'] : '';
+        $add->nameSupervisor        = isset($data['data']['nameSupervisor']) ? $data['data']['nameSupervisor'] : '';
+        $add->maintanceListOne      = isset($data['data']['maintanceListOne']) ? json_encode($data['data']['maintanceListOne'] ) : '';
+        $add->maitanceListTwo       = isset($data['data']['maitanceListTwo']) ? json_encode($data['data']['maitanceListTwo']) : '';
+        $add->signature             = isset($data['data']['signature']) ? base64_encode($data['data']['signature']) : '';
+        $add->status                = $data['status'];
+        $add->save();
 
-        // Antes de guardar Verificamos si el metodo de pago es consaldo
-        if ($add->payment_method == 2) {
-            $usr = AppUser::find($add->user_id);
-            // Verificamos si cuenta con el saldo suficiente
-            if ($usr->saldo > $add->total) { // Si contamos con saldo disponible 
-                $add->save();
-            
-                // Quitamos saldo
-                $usr = AppUser::find($add->user_id);
+        // Cambiamos el Status del Servicio
+        $service = Services::find($data['id_service']);
+        $service->status = $data['status'];
+        $service->save();
 
-                $saldo = ($usr->saldo - $add->total);
+        // $rutaImagenSalida = asset('upload/order/'. substr(md5($add->id), 0 , 10) .'.png');
+        // $image = $this->base64_to_jpeg( base64_encode($data['data']['signature']), $rutaImagenSalida );
 
-                $usr->saldo = $saldo;
-                $usr->save();
+        // Notificamos al usuario que el repartidor acepto el pedido
+        // app('App\Http\Controllers\Controller')->sendPush("Repartidor en camino","El repartidor ha aceptado el pedido y va en camino a recolectarlo.",$add->user_id);
+        
+        return ['data' => 'done', 'add' => $add];
+    }
 
-                // Comenzamos la solicitud de repartidores
-                // $req = new NodejsServer;
-                // $data = [
-                //     'id_order' => $add->id
-                // ];
-                
-                // $req->NewOrderComm($data);
- 
-                // Notificamos al usuario que el repartidor acepto el pedido
-                app('App\Http\Controllers\Controller')->sendPush("Repartidor en camino","El repartidor ha aceptado el pedido y va en camino a recolectarlo.",$add->user_id);
-                
-                // Marcamos al repartidor ocupado.
-                $staff = Delivery::find(10);
-                $staff->status_send = 0;
-                $staff->save();
+    function base64_to_jpeg($base64_string, $output_file) {
+        // open the output file for writing
+        $ifp = fopen( $output_file, 'wb' ); 
+    
+        // split the string on commas
+        // $data[ 0 ] == "data:image/png;base64"
+        // $data[ 1 ] == <actual base64 string>
+        $data = explode( ',', $base64_string );
+    
+        // we could add validation here with ensuring count( $data ) > 1
+        fwrite( $ifp, base64_decode( $data[ 1 ] ) );
+    
+        // clean up the file resource
+        fclose( $ifp ); 
+    
+        return $output_file; 
+    }
 
-                // Eliminamos toda la info de la tabla repas
-                Order_staff::where('event_id',$add->id)->delete();
-
-                // Registramos al repartidor asignado
-                $order_Ext = new Order_staff;
-                $order_Ext->event_id 	= $add->id;
-                $order_Ext->d_boy 		= 10;
-                $order_Ext->type 		= 1;
-                $order_Ext->status 		= '1';
-                $order_Ext->save();
-                // Retornamos hecho
-                return ['data' => 'done'];
-            }else { // No contamos con saldo
-                return ['data' => 'fail','msg' => "balance_insuficient"];
-            }
-        }else {
-            $add->save();
-            // Comenzamos la solicitud de repartidores
-            // $req = new NodejsServer;
-            // $data = [
-            //     'id_order' => $add->id
-            // ];
-            
-            // $req->NewOrderComm($data); 
-          
-            // Notificamos al usuario que el repartidor acepto el pedido
-            app('App\Http\Controllers\Controller')->sendPush("Repartidor en camino","El repartidor ha aceptado el pedido y va en camino a recolectarlo.",$add->user_id);
-            
-            // Marcamos al repartidor ocupado.
-            $staff = Delivery::find(10);
-            $staff->status_send = 0;
-            $staff->save();
-
-            // Eliminamos toda la info de la tabla repas
-            Order_staff::where('event_id',$add->id)->delete();
-
-            // Registramos al repartidor asignado
-            $order_Ext = new Order_staff;
-            $order_Ext->event_id 	= $add->id;
-            $order_Ext->d_boy 		= 10;
-            $order_Ext->type 		= 1;
-            $order_Ext->status 		= '1';
-            $order_Ext->save();
-            // Retornamos hecho
-            return ['data' => 'done'];
-        }
+    function getSignature($service)
+    {
+        
     }
 
     public function getIva($costs_ship)
@@ -135,8 +92,8 @@ class Commaned extends Authenticatable
     public function updateComm($data,$id)
     {
         $add                    = commaned::find($id);
-        $add->first_instr       = isset($data['first_instr']) ? $data['first_instr'] : '';
-        $add->second_instr      = isset($data['second_instr']) ? $data['second_instr'] : '';
+        $add->first_instr       = isset($data['data']['first_instr']) ? $data['data']['first_instr'] : '';
+        $add->second_instr      = isset($data['data']['second_instr']) ? $data['data']['second_instr'] : '';
 
         $add->save();
 
@@ -221,10 +178,10 @@ class Commaned extends Authenticatable
         
         $admin = Admin::find(1);
         $url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=".
-        $data['lat_orig'].",".
-        $data['lng_orig'].
-        "&destinations=".$data['lat_dest'].",".
-        $data['lng_dest'].
+        $data['data']['lat_orig'].",".
+        $data['data']['lng_orig'].
+        "&destinations=".$data['data']['lat_dest'].",".
+        $data['data']['lng_dest'].
         "&key=".$admin->ApiKey_google;
         
         $ch = curl_init($url);
@@ -240,7 +197,7 @@ class Commaned extends Authenticatable
         $request = json_decode($output, true);
 
         // Obtenemos la ciudad en la que se encuenra
-        $city               = City::find($data['city_id']);
+        $city               = City::find($data['data']['city_id']);
         if (isset($city->id)) {
             $min_distance       = $city->min_distance; // Distancia minima del servicio
             $type_value         = $city->c_type; // Tipo del valor KM/Fijo
@@ -298,7 +255,7 @@ class Commaned extends Authenticatable
         // Seteamos el mensaje
         $msg2 = "Nuevo servicio de reparto, Ingresa para más información";
         
-        $data  = [];
+        $data['data']  = [];
         foreach ($staff as $key) {
             // Obtenemos lat & lng de cada repa
             $lat = $key->lat;
@@ -350,7 +307,7 @@ class Commaned extends Authenticatable
                             // Si la distancia maxima de entrega entra en el rango entramos
                             if ($distancia_total <= $key->max_range_km) {
                             
-                                $data[] = [
+                                $data['data'][] = [
                                     'max_range_km' => $key->max_range_km,
                                     'distancia_total' => $distancia_total,
                                     'km_inm' => $km_inm,
@@ -375,20 +332,20 @@ class Commaned extends Authenticatable
         }
 
         return [
-            'dboys' => $data,//$this->ORDER_ASC_STAFF($data)
+            'dboys' => $data['data'],//$this->ORDER_ASC_STAFF($data['data'])
             'url' =>  $url
         ];
     }
 
     function ORDER_ASC_STAFF($data)
     {
-        foreach ($data as $key => $row) {
+        foreach ($data['data'] as $key => $row) {
             $aux[$key] = $row['distancia_total'];
         }
 
-        array_multisort($aux, SORT_ASC, $data);
+        array_multisort($aux, SORT_ASC, $data['data']);
 
-        return $data;
+        return $data['data'];
     }
 
     /**
@@ -464,7 +421,7 @@ class Commaned extends Authenticatable
 
     public function history($id)
     {
-       $data     = [];
+       $data['data']     = [];
        $currency = Admin::find(1)->currency;
  
        $orders = Commaned::where(function($query) use($id){
@@ -531,7 +488,7 @@ class Commaned extends Authenticatable
           $countRate = Rate::where('event_id',$order->id)->where('user_id',$id)->first();
           $tot_com   = $order->total - $order->d_charges;
  
-          $data[] = [
+          $data['data'][] = [
  
              'id'        => $order->id,
              'date'      => date('d-M-Y',strtotime($order->created_at))." | ".date('h:i:A',strtotime($order->created_at)),
@@ -548,12 +505,12 @@ class Commaned extends Authenticatable
           ];
        }
  
-       return $data;
+       return $data['data'];
     }
 
     public function history_staff($id)
     {
-       $data     = [];
+       $data['data']     = [];
        $currency = Admin::find(1)->currency;
  
        $orders = Commaned::where(function($query) use($id){
@@ -610,7 +567,7 @@ class Commaned extends Authenticatable
           $countRate = Rate::where('event_id',$order->id)->where('staff_id',$_GET['id'])->first();
           $tot_com   = $order->total - $order->d_charges;
  
-          $data[] = [
+          $data['data'][] = [
  
              'id'        => $order->id,
              'date'      => date('d-M-Y',strtotime($order->created_at))." | ".date('h:i:A',strtotime($order->created_at)),
@@ -626,12 +583,12 @@ class Commaned extends Authenticatable
           ];
        }
  
-       return $data;
+       return $data['data'];
     }
 
     public function history_ext($id)
    {
-      $data     = [];
+      $data['data']     = [];
       $currency = Admin::find(1)->currency;
 
       $orders = Order_staff::where(function($query) use($id){
@@ -692,7 +649,7 @@ class Commaned extends Authenticatable
             $countRate = Rate::where('event_id',$order->id)->where('staff_id',$id)->first();
             $tot_com   = $order->total - $order->d_charges;
 
-            $data[] = [
+            $data['data'][] = [
                 'type'      => 'comanded',
                 'id'        => $order->id,
                 'user'      => AppUser::find($order->user_id),
@@ -711,7 +668,7 @@ class Commaned extends Authenticatable
             
          }
       }
-      return $data;
+      return $data['data'];
    }
 
     /**
@@ -727,17 +684,17 @@ class Commaned extends Authenticatable
         })->orderBy('id','DESC')
         ->get();
         
-        $data = [];
+        $data['data'] = [];
 
         foreach ($req as $key) {
             
-            $data[] = [
+            $data['data'][] = [
                 'dboy' => ($key->d_boy != 0) ? Delivery::find($key->d_boy) : [],
                 'event' => $key
             ];
         }
 
-        return $data;
+        return $data['data'];
     }
 
     /**
@@ -749,12 +706,12 @@ class Commaned extends Authenticatable
     {
         $req = commaned::find($id)->first();
         
-        $data = [
+        $data['data'] = [
             'dboy' => ($req->d_boy != 0) ? Delivery::find($req->d_boy) : [],
             'event' => $req
         ];
 
-        return $data;
+        return $data['data'];
     }
 
     /**
@@ -790,35 +747,35 @@ class Commaned extends Authenticatable
     {
         $add = new Rate;
         // Agregamos nuevo
-        if (isset($data['user_id'])) {
-            $add->user_id     = $data['user_id'];
-            $add->staff_id    = $data['d_boy'];
-            $add->event_id    = $data['oid'];
-            $add->star        = $data['star'];
-            $add->comment_staff     = isset($data['comment']) ? $data['comment'] : '';
-            $add->good_attention = isset($data['good_attention']) ? 1 : 0;
-            $add->efficient_delivery = isset($data['efficient_delivery']) ? 1 : 0;
+        if (isset($data['data']['user_id'])) {
+            $add->user_id     = $data['data']['user_id'];
+            $add->staff_id    = $data['data']['d_boy'];
+            $add->event_id    = $data['data']['oid'];
+            $add->star        = $data['data']['star'];
+            $add->comment_staff     = isset($data['data']['comment']) ? $data['data']['comment'] : '';
+            $add->good_attention = isset($data['data']['good_attention']) ? 1 : 0;
+            $add->efficient_delivery = isset($data['data']['efficient_delivery']) ? 1 : 0;
             
             $add->save();
 
             // Marcamos como calificado
-            $req = commaned::find($data['oid']);
+            $req = commaned::find($data['data']['oid']);
 
             $req->status = 6;
             $req->save();
 
             // Notificamos
-            $msg = "El usuario ha calificado tu servicio con ".$data['star'].' estrellas.';
+            $msg = "El usuario ha calificado tu servicio con ".$data['data']['star'].' estrellas.';
             $title = "Te han calificado por tu servicio.";
-            app('App\Http\Controllers\Controller')->sendPushD($title,$msg,$data['d_boy']);
+            app('App\Http\Controllers\Controller')->sendPushD($title,$msg,$data['data']['d_boy']);
             
             return ['data' => true];
         }else {
-            $add->staff_id    = $data['d_boy'];
-            $add->event_id    = $data['oid'];
-            $add->star        = $data['star'];
-            $add->comment_staff     = isset($data['comment']) ? $data['comment'] : '';
-            $add->good_attention = isset($data['good_attention']) ? 1 : 0;
+            $add->staff_id    = $data['data']['d_boy'];
+            $add->event_id    = $data['data']['oid'];
+            $add->star        = $data['data']['star'];
+            $add->comment_staff     = isset($data['data']['comment']) ? $data['data']['comment'] : '';
+            $add->good_attention = isset($data['data']['good_attention']) ? 1 : 0;
             
             
             $add->save();            
@@ -836,18 +793,18 @@ class Commaned extends Authenticatable
     {
        $res = Commaned::where(function($query) use($data) {
  
-          if(isset($data['from']))
+          if(isset($data['data']['from']))
           {
-             $from = date('Y-m-d',strtotime($data['from']));
+             $from = date('Y-m-d',strtotime($data['data']['from']));
           }
           else
           {
              $from = null;
           }
  
-          if(isset($data['to']))
+          if(isset($data['data']['to']))
           {
-             $to = date('Y-m-d',strtotime($data['to']));
+             $to = date('Y-m-d',strtotime($data['data']['to']));
           }
           else
           {

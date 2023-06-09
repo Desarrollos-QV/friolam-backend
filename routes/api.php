@@ -16,10 +16,10 @@ use Illuminate\Http\Request;
 Route::group(array('namespace' => 'App\Http\Controllers\Api'), function () {
 
     Route::get('welcome','ApiController@welcome');
-    Route::post('getAdmin','ApiController@getAdmin');
+    Route::get('getAdmin','ApiController@getAdmin');
     Route::get('city','ApiController@city');
     Route::get('GetNearbyCity','ApiController@GetNearbyCity');
-    Route::get('homepage/{city}','ApiController@homepage');
+    Route::get('homepage/{user_id}','ApiController@homepage');
     Route::get('getStore/{id}','ApiController@getStore');
     Route::get('getTypeDelivery/{id}','ApiController@getTypeDelivery');
     Route::get('search/{query}/{type}/{city}','ApiController@search');

@@ -90,10 +90,18 @@
                                                     <input type="hidden" name="staff_id" value="{{$row->id}}">
                                                     <input type="hidden" name="type_report" value="excel">
                                                     <ul class="dropdown-menu" style="margin: 0px; position: absolute; inset: 0px auto auto 0px; transform: translate(0px, 38px);" data-popper-placement="bottom-start">
-                                                        <li><a href="{{ Asset($link.$row->id.'/edit') }}" class="dropdown-item">Editar</a></li></li>
+                                                        <li><a href="{{ Asset($link.$row->id.'/edit') }}" class="dropdown-item">Editar</a></li>
                                                         @if($row->status == 0 || $row->status == 1)
-                                                        <li><a href="{{ Asset($link.'status/'.$row->id) }}/3" class="dropdown-item">Finalizar</a></li></li>
-                                                        <li><a href="{{ Asset($link.'status/'.$row->id) }}/2" class="dropdown-item">Cancelar</a></li></li>
+                                                        <li><a href="{{ Asset($link.'status/'.$row->id) }}/3" class="dropdown-item">Finalizar</a></li>
+                                                        <li><a href="{{ Asset($link.'status/'.$row->id) }}/2" class="dropdown-item">Cancelar</a></li>
+                                                        @elseif($row->status == 5)
+                                                            @if($row->commaned)
+                                                                <li><a href="{{ base64_decode($row->commaned->signature) }}" target="_blank" class="dropdown-item">Ver Firma de entrega</a></li>
+                                                            @else 
+                                                            <li>
+                                                               <a class="dropdown-item"> No hay firma</a>
+                                                            </li>
+                                                            @endif
                                                         @endif
                                                         <li><button type="button" class="dropdown-item" data-toggle="tooltip" data-placement="top" data-original-title="Eliminar Repartidor" onclick="deleteConfirm('{{ Asset($link."delete/".$row->id) }}')"><i class="lni lni-trash"></i>&nbsp;&nbsp;&nbsp; Eliminar </button></li>
                                                     </ul>

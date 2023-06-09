@@ -32,7 +32,7 @@ use App\Balance;
 use App\Commaned;
 use App\Branchs;
 use App\User;
-use App\SubUsers;
+use App\SubUsers; 
 use App\Services;
 use DB;
 use Validator;
@@ -66,12 +66,15 @@ class ApiController extends Controller {
 
 	public function getAdmin()
 	{
-		
+		$text    = new Text; 
+
 		$data = [
-			'admin'		=> Admin::find(1),
+			'text'		=> $text->getAppData(0),
+			'admin'		=> Admin::find(1)
 		];
-	
+
 		return response()->json(['data' => $data]);
+
 	}
 
 	public function updateCity()
@@ -90,15 +93,31 @@ class ApiController extends Controller {
 		return response()->json(['data' => $res->getWithEng()]);
 	}
 
-	public function homepage($city_id)
+	public function homepage($user_id)
 	{
-		$text    = new Text;
-		$offer   = new Offer;
 
-		$data = [
-			'text'		=> $text->getAppData($_GET['lid']),
-			'admin'		=> Admin::find(1),
-			'offers'    => $offer->getAll(0),
+		$servicesAssign = Services::where('dboy', $user_id)->count();
+		$servicesComplet = Services::where('dboy', $user_id)->where('status',5)->count();
+		$InP = Services::where('dboy', $user_id)->where('status',[0,1,3])->orderBy('id','DESC')->first();
+
+
+		// Control de actividad por mes
+		$servicexMonth = Services::where('dboy', $user_id)->where('status',5)->whereDate('created_at','LIKE',date('Y-m').'%')->count();
+		// Metas de este mes
+		$metasxMonth   = Services::where('dboy', $user_id)->where('status',[0,1,3])->whereDate('created_at','LIKE',date('Y-m').'%')->count();
+		$data = [ 
+			'data' => date('Y-m'),
+			'servicesAssign' 	=> $servicesAssign,
+			'servicesComplet'   => $servicesComplet,
+			'servicexMonth'     => ($servicexMonth / 100),
+			'metasxMonth'       => ($metasxMonth / 100),
+			'inProcess' 		=> [
+				'id' => $InP['id'],
+				'client' => User::find($InP['client_id']),
+				'subClient' => SubUsers::find($InP['subclient_id']),
+				'status' => $InP['status'],
+				'created' => $InP['created_at']->format('Y-m-d'),
+			]
 		];
 
 		return response()->json(['data' => $data]);
@@ -142,7 +161,6 @@ class ApiController extends Controller {
 		$user = new User;
 		return response()->json(['cat'=> CategoryStore::find($_GET['cat'])->name,'data' => $user->SearchCat($city_id)]);
 	}
-
 
 	public function addToCart(Request $Request)
 	{
@@ -369,7 +387,6 @@ class ApiController extends Controller {
 		return response()->json([
 			'citys' => $city->getAll()
 		]);
-
 	}
 
 	public function order(Request $Request)
@@ -408,7 +425,6 @@ class ApiController extends Controller {
 
 		return response()->json($res->cancelOrder($id,$uid));
 	}
-
 
 	public function rate(Request $Request)
 	{
@@ -726,15 +742,9 @@ class ApiController extends Controller {
 	public function ChangeService(Request $request)
 	{
 		try {
-			
-			$data = $request->all();
-			$service = Services::find($data['id_service']);
+			$req = new Commaned;
 
-			$service->status = 5; // Finalizado
-			$service->dboy	 = $data['dboy'];
-			$service->save();
-
-			return response()->json(['data' => true, 'req' => $data]);
+			return response()->json(['data' => true, 'req' => $req->addNew($request->all())]);
 		} catch (\Exception $e) {
 			return response()->json(['data' => 'fail','err' => $e->getMessage()]);
 		}

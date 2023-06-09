@@ -14,6 +14,13 @@ class Services extends Authenticatable
 
     protected $table = "services";
 
+
+    function commaned()
+    {
+        return $this->hasOne(Commaned::class);
+    }
+
+
     public function addNew($data,$type) 
     { 
         $add                    = $type === 'add' ? new Services : Services::find($type);
@@ -112,7 +119,7 @@ class Services extends Authenticatable
         })->leftjoin('users','users.id','=','services.client_id')
             ->leftjoin('sub_users','sub_users.id','=','services.subclient_id')
             ->select('users.name as name_user','users.*','sub_users.razon_social as subcliente','services.*')
-            ->orderBy('services.id','DESC')->get();
+            ->orderBy('services.id','DESC')->with('commaned')->get();
     }
 
     /*
